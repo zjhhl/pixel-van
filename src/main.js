@@ -92,7 +92,7 @@ function playSfx(name) {
   } catch (e) { /* 忽略 */ }
 }
 
-/* ---------- 染色工具（白模 → 目标色） ---------- */
+/* ---------- 染色工具（白模 → 目标色，正片叠底保留明暗层次） ---------- */
 const tintCache = new Map();
 
 function tinted(key, img, hex) {
@@ -103,10 +103,12 @@ function tinted(key, img, hex) {
   cv.height = img.height;
   const g = cv.getContext('2d');
   g.drawImage(img, 0, 0);
-  g.globalCompositeOperation = 'source-atop';
-  g.globalAlpha = 0.78;
+  g.globalCompositeOperation = 'multiply';   // 白→目标色，暗部更深，高光层次保留
   g.fillStyle = hex;
   g.fillRect(0, 0, cv.width, cv.height);
+  g.globalCompositeOperation = 'destination-in'; // 恢复原透明区
+  g.drawImage(img, 0, 0);
+  g.globalCompositeOperation = 'source-over';
   tintCache.set(id, cv);
   return cv;
 }
