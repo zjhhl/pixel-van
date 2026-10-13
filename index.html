@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>像素方块小车队</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      background: #2B2B33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="720" height="1280"></canvas>
+  <script src="src/levels.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
