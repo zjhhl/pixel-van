@@ -52,10 +52,12 @@ const IMG = {};
 const SFX = {};
 let loadPending = 0;
 
+let assetsFired = false;
 function loadAll(cb) {
+  const fire = () => { if (!assetsFired) { assetsFired = true; cb(); } };
   const names = Object.keys(MANIFEST);
-  loadPending = names.length + SFX_NAMES.length;
-  const done = () => { loadPending--; if (loadPending === 0) cb(); };
+  loadPending = names.length;
+  const done = () => { loadPending--; if (loadPending === 0) fire(); };
   for (const n of names) {
     const im = new Image();
     im.onload = done;
@@ -63,12 +65,14 @@ function loadAll(cb) {
     im.src = MANIFEST[n];
     IMG[n] = im;
   }
+  // 音效不阻塞加载：canplaythrough 在部分浏览器（尤其移动端）不可靠
   for (const n of SFX_NAMES) {
     const a = new Audio(`assets/sfx/${n}.mp3`);
-    a.addEventListener('canplaythrough', done, { once: true });
-    a.addEventListener('error', done, { once: true });
+    a.preload = 'auto';
     SFX[n] = a;
   }
+  // 兜底：网络再慢 12 秒后也强制进入
+  setTimeout(fire, 12000);
 }
 
 let lastDropSfx = 0;
